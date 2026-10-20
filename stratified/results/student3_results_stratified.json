@@ -1,0 +1,19 @@
+{
+  "dataset": "AI4I",
+  "split_mode": "stratified",
+  "tft_rmse": 0.13722196221351624,
+  "tft_mae": 0.07856032252311707,
+  "tft_coverage_80": 86.51213688818146,
+  "persist_rmse": 0.18886440992355347,
+  "persist_mae": 0.11350280046463013,
+  "ma_rmse": 0.17286235094070435,
+  "ma_mae": 0.1084388718008995,
+  "tft_vs_persist_rmse_pct": 27.3,
+  "tft_vs_ma_rmse_pct": 20.6,
+  "xgb_threshold": 0.35,
+  "xgb_roc_auc": 0.9918442647499252,
+  "xgb_ap": 0.972513222254164,
+  "xgb_f1": 0.9244791666666666,
+  "fteph_mean_h": 33.2,
+  "healthy_baseline": 0.037524428218603134
+}

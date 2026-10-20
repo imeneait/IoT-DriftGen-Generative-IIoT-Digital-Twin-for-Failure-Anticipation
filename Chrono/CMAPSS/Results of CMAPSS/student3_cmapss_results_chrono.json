@@ -1,0 +1,28 @@
+{
+  "dataset": "CMAPSS_FD001",
+  "split_mode": "chrono",
+  "tft_rmse": 0.12823230028152466,
+  "tft_mae": 0.08944328874349594,
+  "tft_coverage_80": 78.23578595317726,
+  "persist_rmse": 0.2030458152294159,
+  "persist_mae": 0.14026248455047607,
+  "ma_rmse": 0.1758691817522049,
+  "ma_mae": 0.13310641050338745,
+  "tft_vs_persist_rmse_pct": 36.8,
+  "tft_vs_ma_rmse_pct": 27.1,
+  "xgb_threshold": 0.75,
+  "xgb_roc_auc": 0.991715595193856,
+  "xgb_ap": 0.8694644944699981,
+  "xgb_f1": 0.7697160883280757,
+  "fteph_mean_h": 46.46969696969697,
+  "healthy_baseline": 0.02243838645517826,
+  "ctrl_summary": [
+    {
+      "Failure Type": "Failure",
+      "Mean Risk (ctrl)": 0.6692,
+      "Peak Risk (ctrl)": 0.9927,
+      "Drift (ctrl)": 0.959,
+      "Threshold crossings": "5/5 seeds"
+    }
+  ]
+}
