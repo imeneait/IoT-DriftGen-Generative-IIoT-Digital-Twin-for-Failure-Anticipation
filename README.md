@@ -1,6 +1,6 @@
 <div align="center">
 
-# IoT-DriftGen
+# IoT-DriftGen (Industrial Research)
 
 ### Predictive maintenance that tells you *how early* it warns, not just whether it's right.
 
@@ -206,7 +206,6 @@ iot-driftgen/
 ├── docs/                              # ablation study, forecasting validation, stratified-leakage note
 ├── results/                           # JSON exports and figures
 ├── paper/                             # manuscript PDF
-└── data/                              # not tracked
 ```
 
 ## Team
