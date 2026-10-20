@@ -138,7 +138,7 @@ Consistency = how far a simulated trajectory moves from the healthy baseline tow
 </p>
 
 <p align="center">
-  <img src="docs/figures/dt_all_trajectories_hires_chrono.png" width="85%" alt="Digital twin trajectories"><br>
+  <img src="./Chrono/CMAPSS/Results of CMAPSS/dt_all_trajectories_hires_chrono.png" width="85%" alt="Digital twin trajectories"><br>
   <em>Closed-loop digital twin: healthy seeds stay below threshold, pre-failure seeds cross it.</em>
 </p>
 
