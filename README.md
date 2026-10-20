@@ -122,11 +122,64 @@ The gain holds across all four AI4I failure types, and the rarest one (TWF, n=49
 
 Consistency = how far a simulated trajectory moves from the healthy baseline toward certain failure, scored by a detector that never shared parameters with the generator. Healthy-seed drift varies from 0.069 (TWF) to 0.236 (HDF) across failure types, which shows the conditioning input is actually used.
 
+<p align="center">
+  <img src="docs/figures/roc_pr_curves.png" width="85%" alt="ROC and PR curves on held-out CMAPSS engines"><br>
+  <em>ROC and precision-recall curves on held-out CMAPSS engines (chronological split).</em>
+</p>
 
-![ROC and PR on held-out CMAPSS engines](https://github.com/imeneait/IoT-DriftGen-Generative-IIoT-Digital-Twin-for-Failure-Anticipation/edit/main/README.md#:~:text=fteph_survival.png-,roc_pr_curves,-.png)
-![TFT quantile forecast](docs/figures/tft_quantile_forecast.png)
-![Digital twin trajectories](docs/figures/dt_all_trajectories_hires_chrono.png)
+<p align="center">
+  <img src="docs/figures/fteph_survival.png" width="70%" alt="FTEPH survival curve"><br>
+  <em>FTEPH: fraction of failure events detected at each minimum lead time.</em>
+</p>
 
+<p align="center">
+  <img src="docs/figures/tft_quantile_forecast.png" width="85%" alt="TFT quantile forecast"><br>
+  <em>TFT forecast (q50) with the 80% uncertainty band against the true future.</em>
+</p>
+
+<p align="center">
+  <img src="docs/figures/dt_all_trajectories_hires_chrono.png" width="85%" alt="Digital twin trajectories"><br>
+  <em>Closed-loop digital twin: healthy seeds stay below threshold, pre-failure seeds cross it.</em>
+</p>
+
+<p align="center">
+  <img src="docs/figures/feature_importance_stratified.png" width="70%" alt="XGBoost feature importance"><br>
+  <em>XGBoost feature importance (AI4I, stratified run). The top features are window statistics (min, last, mean, max-jump) of ToolWear and TempDiff, in line with the ablation: temporal statistics carry the early-warning signal.</em>
+</p>
+
+<details>
+<summary><b>Stratified-split artifacts (AI4I): reproducibility check only</b></summary>
+
+<br>
+
+These figures come from the original stratified protocol. They are kept so the first implementation can be reproduced, **not as evidence of deployment performance**: the stratified split lets near-identical windows appear in train and test, which inflates the detection and digital-twin numbers (see the chronological comparison above).
+
+<p align="center">
+  <img src="docs/figures/roc_pr_curves_stratified.png" width="85%" alt="ROC and PR curves, AI4I stratified"><br>
+  <em>ROC (AUC 0.992) and precision-recall (AP 0.973), AI4I stratified. Compare with 0.767 / 0.380 under the chronological proxy.</em>
+</p>
+
+<p align="center">
+  <img src="docs/figures/confusion_matrix_stratified.png" width="85%" alt="Failure-mode confusion matrix"><br>
+  <em>Failure-mode diagnosis (HDF / OSF / PWF / TWF), AI4I stratified. TWF is the hardest class (0.91 recall), with most errors going to OSF.</em>
+</p>
+
+<p align="center">
+  <img src="docs/figures/dt_all_trajectories_hires_stratified.png" width="100%" alt="Digital twin risk trajectories, healthy vs pre-failure seeds"><br>
+  <em>Closed-loop twin, stratified run: healthy-seed control (left) and pre-failure seeds per failure type. Seeds start near risk 1.0, so the estimated time-to-failure of 1 step is a property of the seed, not of the dynamics.</em>
+</p>
+
+<p align="center">
+  <img src="docs/figures/dt_risk_trajectories_stratified.png" width="85%" alt="Digital twin risk trajectories per failure type"><br>
+  <em>The same risk trajectories, one panel per failure type.</em>
+</p>
+
+<p align="center">
+  <img src="docs/figures/dt_sensor_trajectories_stratified.png" width="85%" alt="Digital twin sensor trajectories"><br>
+  <em>TFT-generated q50 sensor trajectories (ToolWear, TempDiff, Power, ToolStrain) per failure type.</em>
+</p>
+
+</details>
 
 ---
 
