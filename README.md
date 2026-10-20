@@ -18,20 +18,49 @@ Built for the **IEEE IES Generative AI Challenge 2026**.
 
 ---
 
-## The finding in one table
+## Research gap
 
-Most predictive-maintenance papers report one number: classification AUC on a random split. We tested what happens when you remove window-overlap leakage.
+Predictive-maintenance results are hard to trust and hard to act on, for three reasons:
 
-| | Stratified split | Chronological split | Change |
-|---|---|---|---|
-| **ROC-AUC** (AI4I) | 0.992 | 0.767 | **-22 points** |
-| **F1** (AI4I) | 0.925 | 0.518 | **-41 points** |
-| **Mean lead time, FTEPH** (AI4I) | 33.2 cycles | 33.0 cycles | **-0.2 cycles** |
-| **Mean lead time, FTEPH** (CMAPSS) | 46.2 cycles | 46.5 cycles | **+0.3 cycles** |
+1. **Detection is defined at the wrong moment.** Most methods ask "is the machine failing *now*?", which leaves maintenance teams almost no lead time. RUL regression needs precise degradation labels that industrial sites rarely have.
+2. **Reconstruction-based detectors miss abrupt failures.** On datasets like AI4I 2020, failures are point-like and preceded by nominal sensor values, so anomaly scores cannot rise before the failure happens.
+3. **Random stratified evaluation leaks.** Sliding windows from the same stream land on both sides of the split, so reported AUC can reflect memorised neighbours rather than generalisation. Almost no PdM work reports lead time per failure event, so there is no way to tell whether a headline score survives an honest split.
 
-The accuracy score collapses, but the thing a maintenance team actually acts on (how many cycles of warning they get before each failure) does not. That dissociation is the core contribution, and it is why we introduce **FTEPH** (Failure-Type Early Prediction Horizon), an event-level metric that should sit next to AUC in any PdM evaluation.
+## Objective
 
-> On held-out CMAPSS engines the system gives a **46.5-cycle mean warning**, with **95% of 66 failure events caught at least 20 cycles ahead**.
+Build a horizon-based early-warning framework for industrial IoT, together with an event-level lead-time metric (FTEPH), and test whether its operational value holds up under both leaky (stratified) and leak-free (chronological) evaluation.
+
+---
+
+## Stratified vs. chronological: the central result
+
+We ran the identical pipeline under two evaluation protocols on two benchmarks.
+
+| | Stratified | Chronological |
+|---|---|---|
+| **Purpose** | Standard practice, kept as a reproducibility baseline | Deployment-realistic proxy |
+| **AI4I 2020** | Random 70/15/15 split, seed 42 | Windows sorted in row order, 70/15/15, with a K=10 gap buffer between partitions |
+| **CMAPSS FD001** | Random 70/15/15 split | Engine-level: engines 1-70 train, 71-85 validation, 86-100 test; scaler fit on training engines only |
+| **Leakage risk** | High: neighbouring windows share 19 of 20 rows across train and test | Removed on AI4I; test engines are fully unseen on CMAPSS |
+
+| Metric | AI4I strat. | AI4I chrono | CMAPSS strat. | CMAPSS chrono |
+|---|---|---|---|---|
+| ROC-AUC | 0.992 | 0.767 | 0.999 | 0.992 |
+| Average precision | 0.973 | 0.380 | 0.985 | 0.870 |
+| F1 | 0.925 | 0.518 | 0.944 | 0.770 |
+| **FTEPH, mean lead time (cycles)** | **33.2** | **33.0** | **46.2** | **46.5** |
+| Events caught with ≥5 cycles of warning | 100% | 99% | 100% | 100% |
+| Events caught with ≥20 cycles of warning | 67% | 68% | 95% | 95% |
+| TFT forecast RMSE | 0.137 | 0.137 | 0.126 | 0.128 |
+
+**What this shows**
+
+- **AI4I:** removing leakage costs **22 AUC points and 41 F1 points**. The stratified score was largely the model recognising windows it had already seen.
+- **CMAPSS:** the same change costs only 0.7 AUC points, because engines are independent. The remaining F1 drop is genuine domain shift to unseen engines.
+- **FTEPH barely moves on either dataset** (0.2 and 0.3 cycles). The warning a maintenance team gets is robust to the evaluation protocol, while window-level accuracy is not.
+- **Forecasting is unaffected**, since the forecaster optimises a per-window loss with no label leakage path.
+
+**Caveat:** AI4I has no true time axis, so its chronological result is a row-order proxy and should be read as a lower bound. CMAPSS, with its engine-level split, is the genuinely held-out test: **46.5-cycle mean warning, 95% of 66 failure events caught at least 20 cycles ahead.**
 
 ---
 
@@ -94,7 +123,7 @@ The gain holds across all four AI4I failure types, and the rarest one (TWF, n=49
 Consistency = how far a simulated trajectory moves from the healthy baseline toward certain failure, scored by a detector that never shared parameters with the generator. Healthy-seed drift varies from 0.069 (TWF) to 0.236 (HDF) across failure types, which shows the conditioning input is actually used.
 
 
-![ROC and PR on held-out CMAPSS engines](Chrono/CMAPSS/Results of CMAPSS/roc_pr_curves.png)
+![ROC and PR on held-out CMAPSS engines](https://github.com/imeneait/IoT-DriftGen-Generative-IIoT-Digital-Twin-for-Failure-Anticipation/edit/main/README.md#:~:text=fteph_survival.png-,roc_pr_curves,-.png)
 ![TFT quantile forecast](docs/figures/tft_quantile_forecast.png)
 ![Digital twin trajectories](docs/figures/dt_all_trajectories_hires_chrono.png)
 
@@ -127,6 +156,19 @@ jupyter lab notebooks/
 
 Set `SPLIT_MODE = "chrono"` at the top of each notebook for the headline results. Seeds are fixed for NumPy, PyTorch and Python's `random`.
 
+## Repository layout
+
+```
+iot-driftgen/
+├── notebooks/
+│   ├── 01_ai4i_chrono.ipynb
+│   ├── 02_ai4i_stratified.ipynb       # reproducibility check only
+│   └── 03_cmapss_fd001_chrono.ipynb
+├── docs/                              # ablation study, forecasting validation, stratified-leakage note
+├── results/                           # JSON exports and figures
+├── paper/                             # manuscript PDF
+└── data/                              # not tracked
+```
 
 ## Team
 
